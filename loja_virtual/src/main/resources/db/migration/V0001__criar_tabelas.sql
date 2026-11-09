@@ -1,13 +1,10 @@
 create table acesso (
-	
 	id serial primary key, 
 	descricao varchar(150),
-	empresa_id integer not null;
-	
+	empresa_id integer not null
 );
 
 create table pessoa_juridica (
-	
 	id serial primary key,
 	nome varchar(60) not null, 
 	email varchar(100) not null, 
@@ -19,12 +16,10 @@ create table pessoa_juridica (
 	fantasia varchar(60) not null,
 	razao varchar(60) not null,
 	categoria varchar(60),
-	empresa_id integer not null;
-	
+	empresa_id integer not null
 );
 
 create table pessoa_fisica (
-	
 	id serial primary key,
 	nome varchar(60) not null, 
 	email varchar(100) not null, 
@@ -32,13 +27,13 @@ create table pessoa_fisica (
 	tipo_pessoa varchar(30) not null,
 	cpf varchar(20) not null, 
 	data_nascimento date,
-	empresa_id integer not null;
-	
+	empresa_id integer not null
 );
 
-alter table acesso add constraint empresa_id_fk foreign key (empresa_id) references (pessoa_juridica);
-alter table pessoa_fisica add constraint empresa_id_fk foreign key (empresa_id) references (pessoa_juridica);
-alter table pessoa_juridica add constraint empresa_id_fk foreign key (empresa_id) references (pessoa_juridica);
+-- Correção das chaves estrangeiras com a coluna (id) informada
+alter table acesso add constraint fk_empresa_acesso foreign key (empresa_id) references pessoa_juridica(id);
+alter table pessoa_fisica add constraint fk_empresa_pf foreign key (empresa_id) references pessoa_juridica(id);
+alter table pessoa_juridica add constraint fk_empresa_pj foreign key (empresa_id) references pessoa_juridica(id);
 
 create table usuario (
 	id serial primary key, 
@@ -48,9 +43,8 @@ create table usuario (
 	pessoa_id integer not null, 
 	empresa_id integer not null, 
 	
-	constraint fk_empresa_id foreign key (empresa_id) references pessoa_juridica(id),
-	constaint uq_login unique(login);
-	
+	constraint fk_empresa_usuario foreign key (empresa_id) references pessoa_juridica(id),
+	constraint uq_login unique(login)
 );
 
 create table usuarios_acesso (
@@ -58,7 +52,7 @@ create table usuarios_acesso (
 	acesso_id integer not null, 
 	
 	constraint fk_usuario_id foreign key (usuario_id) references usuario(id),
-	constraint fk_acesso_id foreign key (acesso_id) references acesso(id);
+	constraint fk_acesso_id foreign key (acesso_id) references acesso(id)
 );
 
 create table forma_pagamento (
@@ -66,7 +60,7 @@ create table forma_pagamento (
 	descricao varchar(100), 
 	empresa_id integer not null, 
 	
-	constraint fk_empresa_id foreign key (empresa_id) references pessoa_juridica(id);
+	constraint fk_empresa_pagamento foreign key (empresa_id) references pessoa_juridica(id)
 );
 
 create table endereco (
@@ -83,8 +77,5 @@ create table endereco (
 	pessoa_id integer not null, 
 	empresa_id integer not null, 
 	
-	constraint fk_pessoa_id foreign key (empresa_id) references pessoa_juridica(id);
+	constraint fk_empresa_endereco foreign key (empresa_id) references pessoa_juridica(id)
 );
-
-
-
