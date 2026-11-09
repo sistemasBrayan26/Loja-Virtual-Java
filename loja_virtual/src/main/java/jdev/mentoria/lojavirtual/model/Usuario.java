@@ -53,6 +53,11 @@ public class Usuario implements UserDetails {
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
+	@ManyToOne(targetEntity = Pessoa.class)
+	@JoinColumn(name = "empresa_id", nullable = false, 
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
+	private Pessoa empresa;
+	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuarios_acesso", joinColumns = @JoinColumn(name = "usuario_id"), 
 	inverseJoinColumns = @JoinColumn(name = "acesso_id"))
