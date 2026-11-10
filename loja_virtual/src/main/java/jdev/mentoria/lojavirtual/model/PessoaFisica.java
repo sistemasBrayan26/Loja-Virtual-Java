@@ -2,6 +2,8 @@ package jdev.mentoria.lojavirtual.model;
 
 import java.time.LocalDate;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
@@ -20,6 +22,7 @@ public class PessoaFisica extends Pessoa {
 
 	private static final long serialVersionUID = 1L;
 	
+	@CPF
 	@Column(nullable = false)
 	private String cpf;
 	

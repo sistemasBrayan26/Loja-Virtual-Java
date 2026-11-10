@@ -52,7 +52,7 @@ public abstract class Pessoa implements Serializable {
 	@Column(nullable = false)
 	private TipoPessoa tipoPessoa;
 	
-	@ManyToOne(targetEntity = PessoaJuridica.class)
+	@ManyToOne
 	@JoinColumn(name = "empresa_id", 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
 	private PessoaJuridica empresa;

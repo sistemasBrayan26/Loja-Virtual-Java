@@ -40,7 +40,7 @@ public class CupomDesconto implements Serializable {
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataValidade;
 	
-	@ManyToOne(targetEntity = PessoaJuridica.class)
+	@ManyToOne
 	@JoinColumn(name = "empresa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
 	private PessoaJuridica empresa;

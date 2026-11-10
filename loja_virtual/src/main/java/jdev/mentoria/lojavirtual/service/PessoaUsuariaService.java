@@ -14,6 +14,7 @@ import jakarta.mail.MessagingException;
 import jdev.mentoria.lojavirtual.ExceptionMentoria;
 import jdev.mentoria.lojavirtual.model.Acesso;
 import jdev.mentoria.lojavirtual.model.Endereco;
+import jdev.mentoria.lojavirtual.model.PessoaFisica;
 import jdev.mentoria.lojavirtual.model.PessoaJuridica;
 import jdev.mentoria.lojavirtual.model.Usuario;
 import jdev.mentoria.lojavirtual.repository.AcessoRepository;
@@ -72,7 +73,7 @@ public class PessoaUsuariaService {
 			String senhaCriptografada = passwordEncoder.encode("" + Instant.now().toEpochMilli());
 			usuario.setSenha(senhaCriptografada);
 			
-			Optional<Acesso> acessoEncontrado = acessoRepository.findByDescricao("ROLE_USER");
+			Optional<Acesso> acessoEncontrado = acessoRepository.findByDescricao("ROLE_ADMIN");
 			
 			if (acessoEncontrado.isPresent()) {
 				usuario.getAcessos().add(acessoEncontrado.get());
@@ -97,6 +98,67 @@ public class PessoaUsuariaService {
 		}
 
 		return pessoaJuridica;
+	}
+	
+	@Transactional
+	public PessoaFisica salvarPessoaFisicaVerificandoSeExisteUsuario(PessoaFisica pessoaFisica) 
+			throws ExceptionMentoria {
+		
+		if (pessoaFisica == null) {
+			throw new ExceptionMentoria("Não foi informado nenhum dado a respeito da Pessoa Fisica");
+		}
+		
+		if (pessoaFisica.isNova() && pessoaRepository.findByCpf(pessoaFisica.getCpf()).isPresent()) {
+			throw new ExceptionMentoria("Já existe CPF cadastrado com o numero: " + pessoaFisica.getCpf());
+		}
+		
+		if (!pessoaFisica.getEnderecos().isEmpty()) {
+			for (Endereco endereco : pessoaFisica.getEnderecos()) {
+				endereco.setPessoa(pessoaFisica);
+				endereco.setEmpresa(pessoaFisica.getEmpresa());
+			}
+		}
+		
+		pessoaFisica = pessoaRepository.save(pessoaFisica);
+		
+		Optional<Usuario> usuarioExistente = usuarioRepository.findByEmpresaIdAndLogin(pessoaFisica.getId(),
+				pessoaFisica.getEmail());
+		
+		if (usuarioExistente.isEmpty()) {
+			Usuario usuario = new Usuario();
+			usuario.setDataSenhaAtual(LocalDate.now());
+			usuario.setEmpresa(pessoaFisica.getEmpresa());
+			usuario.setPessoa(pessoaFisica);
+			usuario.setLogin(pessoaFisica.getEmail());
+			String senha = "" + Instant.now().toEpochMilli();
+			String senhaCriptografada = passwordEncoder.encode("" + Instant.now().toEpochMilli());
+			usuario.setSenha(senhaCriptografada);
+			
+			Optional<Acesso> acessoEncontrado = acessoRepository.findByDescricao("ROLE_USER");
+			
+			if (acessoEncontrado.isPresent()) {
+				usuario.getAcessos().add(acessoEncontrado.get());
+			}
+			
+			usuario = usuarioRepository.save(usuario);
+			
+			StringBuilder mensagemHtml = new StringBuilder();
+			mensagemHtml.append("<b>Segue abaixo seus dados de acesso para a loja virtual</b><br/>");
+			mensagemHtml.append("<b>Login: </b>"+pessoaFisica.getEmail()+"<br/>");
+			mensagemHtml.append("<b>Senha: </b>").append(senha).append("<br/><br/>");
+			mensagemHtml.append("Obrigado!");
+			
+			try {
+				servicoEnvioEmail.enviarEmailHtml("Acesso gerado para Loja Virtual", 
+						mensagemHtml.toString(), pessoaFisica.getEmail());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			
+		}
+
+		return pessoaFisica;
 	}
 
 }

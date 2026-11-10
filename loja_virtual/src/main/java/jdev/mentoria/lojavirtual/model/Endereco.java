@@ -59,7 +59,7 @@ public class Endereco implements Serializable {
 	private TipoEndereco tipoEndereco;
 	
 	@JsonIgnore
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
@@ -67,7 +67,7 @@ public class Endereco implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
-	private Pessoa empresa;
+	private PessoaJuridica empresa;
 	
 	
 

@@ -32,7 +32,7 @@ public class Acesso implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
-	private PessoaJuridica empresa = new PessoaJuridica();
+	private PessoaJuridica empresa;
 	
 	public boolean isNovo() {
 		return this.id == null;
