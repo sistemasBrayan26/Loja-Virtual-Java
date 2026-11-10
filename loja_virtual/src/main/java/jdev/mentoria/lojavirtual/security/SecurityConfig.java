@@ -38,11 +38,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         
-        // Instancia o filtro de login para a rota "/login"
         JWTLoginFilter jwtLoginFilter = new JWTLoginFilter("/login", authenticationManager);
 
         http
-            // Habilita o CORS e desativa o CSRF (padrão em APIs REST baseadas em Token JWT)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
@@ -56,6 +54,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/", "/index", "/pagamento/**", "/requisicaojunoboleto/**", "/notificacaoapiv2", "/recuperarSenha", "/criaAcesso", "/resources/**", "/static/**", "/templates/**", "/webjars/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/requisicaojunoboleto/**", "/notificacaoapiv2", "/pagamento/**", "/recuperarSenha", "/criaAcesso").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/pessoas").permitAll()
                 .anyRequest().authenticated()
             )
             

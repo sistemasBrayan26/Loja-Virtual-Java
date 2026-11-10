@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@PrimaryKeyJoinColumn(name = "id")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

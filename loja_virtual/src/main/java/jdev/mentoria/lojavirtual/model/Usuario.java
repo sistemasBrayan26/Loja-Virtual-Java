@@ -1,6 +1,7 @@
 package jdev.mentoria.lojavirtual.model;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,17 +47,17 @@ public class Usuario implements UserDetails {
 	
 	@Column(nullable = false)
 	@JsonFormat(pattern = "dd/MM/yyyy")
-	private Date dataSenhaAtual;
+	private LocalDate dataSenhaAtual;
 	
 	@ManyToOne(targetEntity = Pessoa.class)
 	@JoinColumn(name = "pessoa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne
 	@JoinColumn(name = "empresa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
-	private Pessoa empresa;
+	private PessoaJuridica empresa;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuarios_acesso", joinColumns = @JoinColumn(name = "usuario_id"), 
