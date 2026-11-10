@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/", "/index", "/pagamento/**", "/requisicaojunoboleto/**", "/notificacaoapiv2", "/recuperarSenha", "/criaAcesso", "/resources/**", "/static/**", "/templates/**", "/webjars/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/requisicaojunoboleto/**", "/notificacaoapiv2", "/pagamento/**", "/recuperarSenha", "/criaAcesso").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/pessoas").permitAll()
+                .requestMatchers(HttpMethod.POST, "/loja_virtual_mentoria/pessoas/**", "/pessoas/**").permitAll()
                 .anyRequest().authenticated()
             )
             

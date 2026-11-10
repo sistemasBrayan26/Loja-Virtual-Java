@@ -1,5 +1,6 @@
 package jdev.mentoria.lojavirtual.service;
 
+import java.io.UnsupportedEncodingException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.mail.MessagingException;
 import jdev.mentoria.lojavirtual.ExceptionMentoria;
 import jdev.mentoria.lojavirtual.model.Acesso;
 import jdev.mentoria.lojavirtual.model.Endereco;
@@ -32,6 +34,9 @@ public class PessoaUsuariaService {
 	
 	@Autowired
 	private AcessoRepository acessoRepository;
+	
+	@Autowired
+	private ServiceSendEmail servicoEnvioEmail;
 	
 	@Transactional
 	public PessoaJuridica salvarPessoaJuridicaVerificandoSeExisteUsuario(PessoaJuridica pessoaJuridica) 
@@ -63,7 +68,9 @@ public class PessoaUsuariaService {
 			usuario.setEmpresa(pessoaJuridica);
 			usuario.setPessoa(pessoaJuridica);
 			usuario.setLogin(pessoaJuridica.getEmail());
-			usuario.setSenha(passwordEncoder.encode("" + Instant.now().toEpochMilli()));
+			String senha = "" + Instant.now().toEpochMilli();
+			String senhaCriptografada = passwordEncoder.encode("" + Instant.now().toEpochMilli());
+			usuario.setSenha(senhaCriptografada);
 			
 			Optional<Acesso> acessoEncontrado = acessoRepository.findByDescricao("ROLE_USER");
 			
@@ -72,6 +79,20 @@ public class PessoaUsuariaService {
 			}
 			
 			usuario = usuarioRepository.save(usuario);
+			
+			StringBuilder mensagemHtml = new StringBuilder();
+			mensagemHtml.append("<b>Segue abaixo seus dados de acesso para a loja virtual</b><br/>");
+			mensagemHtml.append("<b>Login: </b>"+pessoaJuridica.getEmail()+"<br/>");
+			mensagemHtml.append("<b>Senha: </b>").append(senha).append("<br/><br/>");
+			mensagemHtml.append("Obrigado!");
+			
+			try {
+				servicoEnvioEmail.enviarEmailHtml("Acesso gerado para Loja Virtual", 
+						mensagemHtml.toString(), pessoaJuridica.getEmail());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
 			
 		}
 

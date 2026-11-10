@@ -2,6 +2,8 @@ package jdev.mentoria.lojavirtual.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
@@ -56,10 +58,12 @@ public class Endereco implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private TipoEndereco tipoEndereco;
 	
+	@JsonIgnore
 	@ManyToOne(targetEntity = Pessoa.class)
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))

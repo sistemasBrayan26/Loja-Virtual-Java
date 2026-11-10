@@ -57,9 +57,9 @@ public class TestSalvarPessoaJuridica {
 		pessoaJuridica.getEnderecos().add(endereco);
 		
 		
-		pessoaController.salvarPJ(pessoaJuridica);
+		pessoaJuridica = pessoaController.salvarPJ(pessoaJuridica).getBody();
 		
-	
+		assertEquals(true, pessoaJuridica.getId() > 0);
 		
 	}
 
