@@ -1,0 +1,1 @@
+alter table produto add constraint unique_nome_produto unique(nome);

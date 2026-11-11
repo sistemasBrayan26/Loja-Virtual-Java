@@ -40,7 +40,7 @@ public class Produto implements Serializable {
 	private String tipoUnidade;
 	
 	@NotBlank(message = "Nome é obrigatório")
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String nome;
 	
 	@Column(nullable = false)
