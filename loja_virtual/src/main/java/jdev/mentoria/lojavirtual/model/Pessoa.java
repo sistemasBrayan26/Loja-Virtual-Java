@@ -55,12 +55,11 @@ public abstract class Pessoa implements Serializable {
 	@Column(nullable = false)
 	private String telefone;
 	
-	@NotBlank(message = "Tipo é obrigatório")
+	@NotNull(message = "Tipo é obrigatório")
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private TipoPessoa tipoPessoa;
 	
-	@NotNull(message = "A empresa é obrigatória")
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))

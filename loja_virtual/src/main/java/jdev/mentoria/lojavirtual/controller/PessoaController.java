@@ -3,7 +3,10 @@ package jdev.mentoria.lojavirtual.controller;
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,7 @@ import jakarta.validation.Valid;
 import jdev.mentoria.lojavirtual.ExceptionMentoria;
 import jdev.mentoria.lojavirtual.model.PessoaFisica;
 import jdev.mentoria.lojavirtual.model.PessoaJuridica;
+import jdev.mentoria.lojavirtual.model.dto.CepDTO;
 import jdev.mentoria.lojavirtual.service.PessoaUsuariaService;
 
 @RestController
@@ -45,6 +49,12 @@ public class PessoaController {
 				.buildAndExpand(pessoaFisica.getId()).toUri();
 		
 		return ResponseEntity.created(uri).body(pessoaFisica);
+	}
+	
+	@GetMapping("/consultaCep/{cep}")
+	public ResponseEntity<CepDTO> consultarCep(@PathVariable String cep) {
+		CepDTO cepDTO = pessoaUsuariaService.consultaCep(cep);
+		return new ResponseEntity<CepDTO>(cepDTO, HttpStatus.OK);
 	}
 
 }

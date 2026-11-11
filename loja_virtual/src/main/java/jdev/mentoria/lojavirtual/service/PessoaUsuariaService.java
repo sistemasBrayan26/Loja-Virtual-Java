@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.mail.MessagingException;
 import jdev.mentoria.lojavirtual.ExceptionMentoria;
@@ -17,7 +18,9 @@ import jdev.mentoria.lojavirtual.model.Endereco;
 import jdev.mentoria.lojavirtual.model.PessoaFisica;
 import jdev.mentoria.lojavirtual.model.PessoaJuridica;
 import jdev.mentoria.lojavirtual.model.Usuario;
+import jdev.mentoria.lojavirtual.model.dto.CepDTO;
 import jdev.mentoria.lojavirtual.repository.AcessoRepository;
+import jdev.mentoria.lojavirtual.repository.EnderecoRepository;
 import jdev.mentoria.lojavirtual.repository.PessoaRepository;
 import jdev.mentoria.lojavirtual.repository.UsuarioRepository;
 
@@ -39,6 +42,9 @@ public class PessoaUsuariaService {
 	@Autowired
 	private ServiceSendEmail servicoEnvioEmail;
 	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	
 	@Transactional
 	public PessoaJuridica salvarPessoaJuridicaVerificandoSeExisteUsuario(PessoaJuridica pessoaJuridica) 
 			throws ExceptionMentoria {
@@ -47,10 +53,36 @@ public class PessoaUsuariaService {
 			throw new ExceptionMentoria("Já existe CNPJ cadastrado com o numero: " + pessoaJuridica.getCnpj());
 		}
 		
-		if (!pessoaJuridica.getEnderecos().isEmpty()) {
+		if (pessoaJuridica.isNova()) {
 			for (Endereco endereco : pessoaJuridica.getEnderecos()) {
+				CepDTO cepDTO = consultaCep(endereco.getCep());
+				endereco.setLogradouro(cepDTO.getLogradouro());
+				endereco.setBairro(cepDTO.getBairro());
+				endereco.setCep(endereco.getCep());
+				endereco.setCidade(cepDTO.getLocalidade());
+				endereco.setComplemento(cepDTO.getComplemento());
+				endereco.setEstado(cepDTO.getEstado());
+				endereco.setUf(cepDTO.getUf());
 				endereco.setPessoa(pessoaJuridica);
 				endereco.setEmpresa(pessoaJuridica);
+			}
+		} else {
+			for (Endereco endereco : pessoaJuridica.getEnderecos()) {
+				Endereco enderecoTemporario = enderecoRepository.findById(endereco.getId()).get();
+				
+				if (!enderecoTemporario.getCep().equals(endereco.getCep())) {
+					CepDTO cepDTO = consultaCep(endereco.getCep());
+					endereco.setLogradouro(cepDTO.getLogradouro());
+					endereco.setBairro(cepDTO.getBairro());
+					endereco.setCep(endereco.getCep());
+					endereco.setCidade(cepDTO.getLocalidade());
+					endereco.setComplemento(cepDTO.getComplemento());
+					endereco.setEstado(cepDTO.getEstado());
+					endereco.setUf(cepDTO.getUf());
+					endereco.setPessoa(pessoaJuridica);
+					endereco.setEmpresa(pessoaJuridica);
+				}
+				
 			}
 		}
 		
@@ -104,10 +136,36 @@ public class PessoaUsuariaService {
 			throw new ExceptionMentoria("Já existe CPF cadastrado com o numero: " + pessoaFisica.getCpf());
 		}
 		
-		if (!pessoaFisica.getEnderecos().isEmpty()) {
+		if (pessoaFisica.isNova()) {
 			for (Endereco endereco : pessoaFisica.getEnderecos()) {
+				CepDTO cepDTO = consultaCep(endereco.getCep());
+				endereco.setLogradouro(cepDTO.getLogradouro());
+				endereco.setBairro(cepDTO.getBairro());
+				endereco.setCep(endereco.getCep());
+				endereco.setCidade(cepDTO.getLocalidade());
+				endereco.setComplemento(cepDTO.getComplemento());
+				endereco.setEstado(cepDTO.getEstado());
+				endereco.setUf(cepDTO.getUf());
 				endereco.setPessoa(pessoaFisica);
 				endereco.setEmpresa(pessoaFisica.getEmpresa());
+			}
+		} else {
+			for (Endereco endereco : pessoaFisica.getEnderecos()) {
+				Endereco enderecoTemporario = enderecoRepository.findById(endereco.getId()).get();
+				
+				if (!enderecoTemporario.getCep().equals(endereco.getCep())) {
+					CepDTO cepDTO = consultaCep(endereco.getCep());
+					endereco.setLogradouro(cepDTO.getLogradouro());
+					endereco.setBairro(cepDTO.getBairro());
+					endereco.setCep(endereco.getCep());
+					endereco.setCidade(cepDTO.getLocalidade());
+					endereco.setComplemento(cepDTO.getComplemento());
+					endereco.setEstado(cepDTO.getEstado());
+					endereco.setUf(cepDTO.getUf());
+					endereco.setPessoa(pessoaFisica);
+					endereco.setEmpresa(pessoaFisica.getEmpresa());
+				}
+				
 			}
 		}
 		
@@ -151,6 +209,11 @@ public class PessoaUsuariaService {
 		}
 
 		return pessoaFisica;
+	}
+	
+	public CepDTO consultaCep(String cep) {
+		return new RestTemplate().getForEntity("https://viacep.com.br/ws/" +cep +"/json/", CepDTO.class)
+				.getBody();
 	}
 
 }

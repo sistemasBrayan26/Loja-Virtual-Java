@@ -33,7 +33,6 @@ public class Endereco implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank(message = "Logradouro deve ser informado")
 	@Column(nullable = false)
 	private String logradouro;
 	
@@ -45,36 +44,30 @@ public class Endereco implements Serializable {
 	@Column(nullable = false)
 	private String cep;
 	
-	@NotBlank(message = "Bairro deve ser informado")
 	@Column(nullable = false)
 	private String bairro;
 	
 	private String complemento;
 	
-	@NotBlank(message = "UF deve ser informado")
 	@Column(nullable = false)
 	private String uf;
 	
-	@NotBlank(message = "Cidade deve ser informada")
 	@Column(nullable = false)
 	private String cidade;
 	
-	@NotBlank(message = "Estado deve ser informado")
 	@Column(nullable = true)
 	private String estado;
 	
-	@NotBlank(message = "Tipo do Endereço deve ser informado")
+	@NotNull(message = "Tipo do Endereço deve ser informado")
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TipoEndereco tipoEndereco;
 	
-	@NotNull(message = "Pessoa é obrigatória")
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
-	@NotNull(message = "Empresa é obrigatória")
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", nullable = false, 
