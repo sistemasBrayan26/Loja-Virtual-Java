@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import jakarta.validation.Valid;
 import jdev.mentoria.lojavirtual.ExceptionMentoria;
 import jdev.mentoria.lojavirtual.model.Acesso;
 import jdev.mentoria.lojavirtual.repository.AcessoRepository;
@@ -31,7 +32,7 @@ public class AcessoController {
 	private AcessoRepository acessoRepository;
 	
 	@PostMapping
-	public ResponseEntity<Acesso> salvar(@RequestBody Acesso acesso) throws ExceptionMentoria {
+	public ResponseEntity<Acesso> salvar(@RequestBody @Valid Acesso acesso) throws ExceptionMentoria {
 		
 		try {
 			acesso = acessoService.registrar(acesso);

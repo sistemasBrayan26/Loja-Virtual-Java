@@ -21,6 +21,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jdev.mentoria.lojavirtual.model.enums.TipoPessoa;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,19 +42,25 @@ public abstract class Pessoa implements Serializable {
 	@SequenceGenerator(name = "pessoa_seq_gen", sequenceName = "pessoa_seq", allocationSize = 1)
 	private Long id;
 	
+	@NotBlank(message = "Nome é obrigatório")
 	@Column(nullable = false)
 	private String nome;
 	
+	@Email(message = "Por favor informe um e-mail valido")
+	@NotBlank(message = "E-mail é obrigatório")
 	@Column(nullable = false)
 	private String email;
 	
+	@NotBlank(message = "Telefone é obrigatório")
 	@Column(nullable = false)
 	private String telefone;
 	
+	@NotBlank(message = "Tipo é obrigatório")
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private TipoPessoa tipoPessoa;
 	
+	@NotNull(message = "A empresa é obrigatória")
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))

@@ -43,10 +43,6 @@ public class PessoaUsuariaService {
 	public PessoaJuridica salvarPessoaJuridicaVerificandoSeExisteUsuario(PessoaJuridica pessoaJuridica) 
 			throws ExceptionMentoria {
 		
-		if (pessoaJuridica == null) {
-			throw new ExceptionMentoria("Não foi informado nenhum dado a respeito da Pessoa Juridica");
-		}
-		
 		if (pessoaJuridica.isNova() && pessoaRepository.findByCnpj(pessoaJuridica.getCnpj()).isPresent()) {
 			throw new ExceptionMentoria("Já existe CNPJ cadastrado com o numero: " + pessoaJuridica.getCnpj());
 		}
@@ -103,10 +99,6 @@ public class PessoaUsuariaService {
 	@Transactional
 	public PessoaFisica salvarPessoaFisicaVerificandoSeExisteUsuario(PessoaFisica pessoaFisica) 
 			throws ExceptionMentoria {
-		
-		if (pessoaFisica == null) {
-			throw new ExceptionMentoria("Não foi informado nenhum dado a respeito da Pessoa Fisica");
-		}
 		
 		if (pessoaFisica.isNova() && pessoaRepository.findByCpf(pessoaFisica.getCpf()).isPresent()) {
 			throw new ExceptionMentoria("Já existe CPF cadastrado com o numero: " + pessoaFisica.getCpf());

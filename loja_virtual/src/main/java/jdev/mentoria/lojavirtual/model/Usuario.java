@@ -24,6 +24,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -39,9 +41,11 @@ public class Usuario implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotBlank(message = "Login é obrigatório")
 	@Column(nullable = false, unique = true)
 	private String login;
 	
+	@NotBlank(message = "Senha é obrigatória")
 	@Column(nullable = false)
 	private String senha;
 	
@@ -49,11 +53,13 @@ public class Usuario implements UserDetails {
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataSenhaAtual;
 	
+	@NotNull(message = "A pessoa é obrigatória")
 	@ManyToOne(targetEntity = Pessoa.class)
 	@JoinColumn(name = "pessoa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private Pessoa pessoa;
 	
+	@NotNull(message = "A empresa é obrigatória")
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))

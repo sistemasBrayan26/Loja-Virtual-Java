@@ -11,6 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,17 +28,21 @@ public class ImagemProduto implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotBlank(message = "Imagem original é obrigatória")
 	@Column(columnDefinition = "text", nullable = false)
 	private String imagemOriginal;
 
+	@NotBlank(message = "Miniatura é obrigatório")
 	@Column(columnDefinition = "text", nullable = false)
 	private String imagemMiniatura;
 
+	@NotNull(message = "Produto é obrigatório")
 	@ManyToOne
 	@JoinColumn(name = "produto_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "produto_fk"))
 	private Produto produto;
 	
+	@NotNull(message = "Empresa é obrigatória")
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))

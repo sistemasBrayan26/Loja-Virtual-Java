@@ -10,6 +10,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,10 +24,11 @@ public class PessoaFisica extends Pessoa {
 
 	private static final long serialVersionUID = 1L;
 	
-	@CPF
+	@CPF(message = "Informe um CPF válido")
 	@Column(nullable = false)
 	private String cpf;
 	
+	@NotNull(message = "Data de nascimento obrigatória")
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataNascimento;
 	
