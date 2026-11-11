@@ -26,91 +26,83 @@ import jdev.mentoria.lojavirtual.service.ServiceSendEmail;
 @RestControllerAdvice
 @ControllerAdvice
 public class ControleExcecoes {
-	
+
 	@Autowired
 	private ServiceSendEmail serviceEmail;
-	
+
+	// Trata a sua exceção personalizada
 	@ExceptionHandler(ExceptionMentoria.class)
-	public ResponseEntity<Object> handleExceptionCustom (ExceptionMentoria ex) {
-		
+	public ResponseEntity<Object> handleExceptionCustom(ExceptionMentoria ex) {
 		ObjetoErroDTO objetoErroDTO = new ObjetoErroDTO();
-		
 		objetoErroDTO.setError(ex.getMessage());
 		objetoErroDTO.setCode(HttpStatus.OK.toString());
-		
-		return new ResponseEntity<Object>(objetoErroDTO, HttpStatus.OK);
+
+		return new ResponseEntity<>(objetoErroDTO, HttpStatus.OK);
 	}
-	
-	@ExceptionHandler({Exception.class, RuntimeException.class, Throwable.class})
-	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-			HttpStatus status, WebRequest request) {
-		
+
+	// Trata erros de validação de DTO (@Valid)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		ObjetoErroDTO objetoErroDTO = new ObjetoErroDTO();
-		
 		String msg = "";
-		
-		if (ex instanceof MethodArgumentNotValidException) {
-			
-			List<ObjectError> list = ((MethodArgumentNotValidException) ex).getBindingResult().getAllErrors();
-			
-			for (ObjectError objectError : list) {
-				msg += objectError.getDefaultMessage() + "\n";
-			}
+
+		List<ObjectError> list = ex.getBindingResult().getAllErrors();
+		for (ObjectError objectError : list) {
+			msg += objectError.getDefaultMessage() + "\n";
 		}
-		else if (ex instanceof HttpMessageNotReadableException) {
-			
-			msg = "Não está sendo enviado dados para o BODY corpo da requisição";
-			
-		}else {
-			msg = ex.getMessage();
-		}
-		
+
 		objetoErroDTO.setError(msg);
-		objetoErroDTO.setCode(status.value() + " ==> " + status.getReasonPhrase()); 
-		
+		objetoErroDTO.setCode(HttpStatus.BAD_REQUEST.value() + " ==> " + HttpStatus.BAD_REQUEST.getReasonPhrase());
+
+		return new ResponseEntity<>(objetoErroDTO, HttpStatus.BAD_REQUEST);
+	}
+
+	// Trata corpo da requisição ausente ou mal formatado
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<Object> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+		ObjetoErroDTO objetoErroDTO = new ObjetoErroDTO();
+		objetoErroDTO.setError("Não está sendo enviado dados para o BODY corpo da requisição");
+		objetoErroDTO.setCode(HttpStatus.BAD_REQUEST.value() + " ==> " + HttpStatus.BAD_REQUEST.getReasonPhrase());
+
+		return new ResponseEntity<>(objetoErroDTO, HttpStatus.BAD_REQUEST);
+	}
+
+	// Captura erros de integridade no banco de dados com segurança contra
+	// NullPointerException
+	@ExceptionHandler({ DataIntegrityViolationException.class, ConstraintViolationException.class, SQLException.class })
+	public ResponseEntity<Object> handleExceptionDataIntegrity(Exception ex) {
+		ObjetoErroDTO objetoErroDTO = new ObjetoErroDTO();
+		String msg = "";
+
+		Throwable rootCause = ex;
+		while (rootCause.getCause() != null) {
+			rootCause = rootCause.getCause();
+		}
+		msg = "Erro no banco de dados: " + rootCause.getMessage();
+
+		objetoErroDTO.setError(msg);
+		objetoErroDTO.setCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+
+		return new ResponseEntity<>(objetoErroDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	// Captura qualquer outra exceção genérica não mapeada acima
+	@ExceptionHandler({ Exception.class, RuntimeException.class, Throwable.class })
+	public ResponseEntity<Object> handleGeneralException(Exception ex) {
+		ObjetoErroDTO objetoErroDTO = new ObjetoErroDTO();
+
+		objetoErroDTO.setError(ex.getMessage());
+		objetoErroDTO.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value() + " ==> "
+				+ HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+
 		try {
-			serviceEmail.enviarEmailHtml("Erro na loja Virtual", ExceptionUtils.getStackTrace(ex), 
+			serviceEmail.enviarEmailHtml("Erro na loja Virtual", ExceptionUtils.getStackTrace(ex),
 					"brayan.iub10@hotmail.com");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
-		return new ResponseEntity<Object>(objetoErroDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-	
-	
-	/*Captura erro na parte de banco*/
-	@ExceptionHandler({DataIntegrityViolationException.class, 
-			ConstraintViolationException.class, SQLException.class})
-	protected ResponseEntity<Object> handleExceptionDataIntegry(Exception ex){
-		
-		ObjetoErroDTO objetoErroDTO = new ObjetoErroDTO();
-		
-		String msg = "";
-		
-		if (ex instanceof DataIntegrityViolationException) {
-			msg = "Erro de integridade no banco: " +  ((DataIntegrityViolationException) ex).getCause().getCause().getMessage();
-		}else
-		if (ex instanceof ConstraintViolationException) {
-			msg = "Erro de chave estrangeira: " + ((ConstraintViolationException) ex).getCause().getCause().getMessage();
-		}else
-		if (ex instanceof SQLException) {
-			msg = "Erro de SQL do Banco: " + ((SQLException) ex).getCause().getCause().getMessage();
-		}else {
-			msg = ex.getMessage();
-		}
-		
-		objetoErroDTO.setError(msg);
-		objetoErroDTO.setCode(HttpStatus.INTERNAL_SERVER_ERROR.toString()); 
-		
-		
-		return new ResponseEntity<Object>(objetoErroDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-		
+
+		return new ResponseEntity<>(objetoErroDTO, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

@@ -1,0 +1,1 @@
+alter table categoria_produto add constraint uniq_descricao unique(descricao);

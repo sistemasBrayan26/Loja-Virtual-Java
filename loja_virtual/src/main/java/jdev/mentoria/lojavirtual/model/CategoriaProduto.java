@@ -31,10 +31,9 @@ public class CategoriaProduto implements Serializable {
 	private Long id;
 	
 	@NotBlank(message = "Necessário informar uma descrição")
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String descricao;
 	
-	@JsonIgnore
 	@NotNull(message = "Necessário informar a empresa")
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", nullable = false, 
