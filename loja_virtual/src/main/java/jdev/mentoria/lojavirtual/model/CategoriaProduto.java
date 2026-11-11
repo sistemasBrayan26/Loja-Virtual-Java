@@ -2,6 +2,8 @@ package jdev.mentoria.lojavirtual.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
@@ -32,6 +34,7 @@ public class CategoriaProduto implements Serializable {
 	@Column(nullable = false)
 	private String descricao;
 	
+	@JsonIgnore
 	@NotNull(message = "Necessário informar a empresa")
 	@ManyToOne
 	@JoinColumn(name = "empresa_id", nullable = false, 

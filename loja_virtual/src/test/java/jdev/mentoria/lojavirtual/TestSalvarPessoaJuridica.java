@@ -24,7 +24,7 @@ public class TestSalvarPessoaJuridica {
 		PessoaJuridica pessoaJuridica = new PessoaJuridica();
 		pessoaJuridica.setCategoria("ADMINISTRADOR");
 		pessoaJuridica.setCnpj("89.711.538/0001-18");
-		pessoaJuridica.setEmail("sac@joanaerobertocasanoturnaltda.com.br");
+		pessoaJuridica.setEmail("brayan.iub10@gmail.com");
 		pessoaJuridica.setFantasia("Joana e Roberto Casa Noturna Ltda");
 		pessoaJuridica.setInscricaoEstadual("11.944.101-2");
 		pessoaJuridica.setInscricaoMunicipal("ISENTO");

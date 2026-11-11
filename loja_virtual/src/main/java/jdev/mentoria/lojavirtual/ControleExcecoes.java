@@ -4,7 +4,9 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,11 +19,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import jakarta.mail.MessagingException;
 import jdev.mentoria.lojavirtual.model.dto.ObjetoErroDTO;
+import jdev.mentoria.lojavirtual.service.ServiceSendEmail;
 
 @RestControllerAdvice
 @ControllerAdvice
 public class ControleExcecoes {
+	
+	@Autowired
+	private ServiceSendEmail serviceEmail;
 	
 	@ExceptionHandler(ExceptionMentoria.class)
 	public ResponseEntity<Object> handleExceptionCustom (ExceptionMentoria ex) {
@@ -60,6 +67,17 @@ public class ControleExcecoes {
 		
 		objetoErroDTO.setError(msg);
 		objetoErroDTO.setCode(status.value() + " ==> " + status.getReasonPhrase()); 
+		
+		try {
+			serviceEmail.enviarEmailHtml("Erro na loja Virtual", ExceptionUtils.getStackTrace(ex), 
+					"brayan.iub10@hotmail.com");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		return new ResponseEntity<Object>(objetoErroDTO, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -28,46 +28,25 @@ import jdev.mentoria.lojavirtual.service.ImplementacaoUserDetailsService;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 	
-	
-	@Autowired
-    private ImplementacaoUserDetailsService implementacaoUserDetailsService;
-
     @Autowired
     private JwtApiAutenticacaoFilter jwtApiAutenticacaoFilter;
     
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-        
-        JWTLoginFilter jwtLoginFilter = new JWTLoginFilter("/login", authenticationManager);
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .disable() 
-            )
-            // Sessão sem estado (Stateless), pois usamos tokens JWT
+            .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            
-            // Regras de liberação de rotas (substitui o antMatchers do WebSecurityConfigurerAdapter)
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/login").permitAll() // Libera a rota de login
                 .requestMatchers(HttpMethod.GET, "/", "/index", "/pagamento/**", "/requisicaojunoboleto/**", "/notificacaoapiv2", "/recuperarSenha", "/criaAcesso", "/resources/**", "/static/**", "/templates/**", "/webjars/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/requisicaojunoboleto/**", "/notificacaoapiv2", "/pagamento/**", "/recuperarSenha", "/criaAcesso").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/loja_virtual_mentoria/pessoas/**", "/pessoas/**").permitAll()
                 .anyRequest().authenticated()
             )
-            
-            // Adiciona os filtros customizados do JWT
-            .addFilterBefore(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(jwtApiAutenticacaoFilter, UsernamePasswordAuthenticationFilter.class)
-            
-            // Configuração de Logout
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/index")
-                .permitAll()
-            );
+            // Adiciona apenas o filtro de validação do token nas requisições
+            .addFilterBefore(jwtApiAutenticacaoFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -85,7 +64,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*")); // Pode restringir para os domínios do seu front-end se preferir
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));

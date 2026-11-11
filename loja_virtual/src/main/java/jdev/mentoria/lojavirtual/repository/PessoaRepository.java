@@ -1,5 +1,6 @@
 package jdev.mentoria.lojavirtual.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +15,6 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
 	Optional<PessoaJuridica> findByCnpj(String cnpj);
 	
 	Optional<PessoaFisica> findByCpf(String cpf);
+	
 
 }

@@ -19,6 +19,7 @@ import jdev.mentoria.lojavirtual.model.PessoaFisica;
 import jdev.mentoria.lojavirtual.model.PessoaJuridica;
 import jdev.mentoria.lojavirtual.model.Usuario;
 import jdev.mentoria.lojavirtual.model.dto.CepDTO;
+import jdev.mentoria.lojavirtual.model.dto.ConsultaCnpjDTO;
 import jdev.mentoria.lojavirtual.repository.AcessoRepository;
 import jdev.mentoria.lojavirtual.repository.EnderecoRepository;
 import jdev.mentoria.lojavirtual.repository.PessoaRepository;
@@ -213,6 +214,11 @@ public class PessoaUsuariaService {
 	
 	public CepDTO consultaCep(String cep) {
 		return new RestTemplate().getForEntity("https://viacep.com.br/ws/" +cep +"/json/", CepDTO.class)
+				.getBody();
+	}
+	
+	public ConsultaCnpjDTO consultarCnpj(String cnpj) {
+		return new RestTemplate().getForEntity("https://receitaws.com.br/v1/cnpj/" + cnpj, ConsultaCnpjDTO.class)
 				.getBody();
 	}
 
