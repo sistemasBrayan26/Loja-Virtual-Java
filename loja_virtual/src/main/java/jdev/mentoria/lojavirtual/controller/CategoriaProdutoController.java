@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
 import jdev.mentoria.lojavirtual.ExceptionMentoria;
+import jdev.mentoria.lojavirtual.controller.converter.CategoriaProdutoModelAssembler;
 import jdev.mentoria.lojavirtual.model.CategoriaProduto;
 import jdev.mentoria.lojavirtual.model.dto.CategoriaDTO;
 import jdev.mentoria.lojavirtual.repository.CategoriaProdutoRepository;
@@ -29,19 +30,18 @@ public class CategoriaProdutoController {
 	@Autowired
 	private CategoriaProdutoRepository categoriaProdutoRepository;
 	
+	@Autowired
+	private CategoriaProdutoModelAssembler conversor;
+	
 	@PostMapping
 	public ResponseEntity<CategoriaDTO> salvarCategoria(@RequestBody
 			@Valid CategoriaProduto categoria) {
 		
 		categoria = categoriaProdutoRepository.save(categoria);
-		CategoriaDTO categoriaDTO = new CategoriaDTO();
-		categoriaDTO.setId(categoria.getId());
-		categoriaDTO.setDescricao(categoria.getDescricao());
-		categoriaDTO.setEmpresa(categoria.getEmpresa().getId());
 		
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(categoria.getId()).toUri();
-		return ResponseEntity.created(uri).body(categoriaDTO);
+		return ResponseEntity.created(uri).body(conversor.toModel(categoria));
 		
 	}
 	
@@ -61,17 +61,27 @@ public class CategoriaProdutoController {
 	@GetMapping("/porDescricao/{descricao}")
 	public ResponseEntity<List<CategoriaDTO>> buscarPorDescricao(@PathVariable String descricao) {
 		List<CategoriaProduto> listaCategorias = categoriaProdutoRepository.findByDescricaoContainingIgnoreCase(descricao);
-		List<CategoriaDTO> categorias = new ArrayList<>();
-		for (CategoriaProduto categoria : listaCategorias) {
-			CategoriaDTO categoriaDTO = new CategoriaDTO();
-			categoriaDTO.setId(categoria.getId());
-			categoriaDTO.setDescricao(categoria.getDescricao());
-			categoriaDTO.setEmpresa(categoria.getEmpresa().getId());
-			categorias.add(categoriaDTO);
-			
+		return ResponseEntity.ok(conversor.toCollectionModel(listaCategorias));
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<CategoriaDTO> buscarCategoriaPorCodigo(@PathVariable Long id) {
+		Optional<CategoriaProduto> categoria = categoriaProdutoRepository.findById(id);
+		
+		if (categoria.isEmpty()) {
+			return ResponseEntity.notFound().build();
 		}
 		
-		return ResponseEntity.ok(categorias);
+		return ResponseEntity.ok(conversor.toModel(categoria.get()));
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<CategoriaDTO>> carregarTodas() {
+		
+		List<CategoriaProduto> listaCategorias = categoriaProdutoRepository.findAll();
+		
+		return ResponseEntity.ok(conversor.toCollectionModel(listaCategorias));
+		
 	}
 	
 	

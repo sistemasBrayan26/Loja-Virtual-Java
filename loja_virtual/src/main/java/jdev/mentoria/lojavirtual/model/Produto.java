@@ -20,6 +20,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -39,6 +40,7 @@ public class Produto implements Serializable {
 	@Column(nullable = false)
 	private String tipoUnidade;
 	
+	@Size(min = 10, message = "Necessário ao menos 10 caracteres para o nome")
 	@NotBlank(message = "Nome é obrigatório")
 	@Column(nullable = false, unique = true)
 	private String nome;
@@ -80,7 +82,7 @@ public class Produto implements Serializable {
 	@Column(nullable = false)
 	private Integer qtdEstoque = 0;
 
-	private Integer qtdeAlertaEstoque = 0;
+	private Integer qtdAlertaEstoque = 0;
 
 	private String linkYoutube;
 

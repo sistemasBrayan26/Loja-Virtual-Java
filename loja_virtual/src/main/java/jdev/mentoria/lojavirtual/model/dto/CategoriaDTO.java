@@ -8,6 +8,6 @@ public class CategoriaDTO {
 	
 	private Long id;
 	private String descricao;
-	private Long empresa;
+	private Long empresaId;
 
 }
