@@ -26,12 +26,12 @@ public class NotaItemProduto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_nota_fiscal_venda")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@NotNull(message = "A quantidade é obrigatória")
 	@Positive(message = "O quantidade deve ser maior que zero")
-	@DecimalMin(value = "0.00")
+	@DecimalMin(value = "0.01")
 	@Column(nullable = false)
 	private BigDecimal quantidade;
 

@@ -3,18 +3,23 @@ package jdev.mentoria.lojavirtual.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -66,10 +71,10 @@ public class NotaFiscalCompra implements Serializable {
 	private LocalDate dataCompra;
 	
 	@NotNull(message = "Pessoa deve ser informada")
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne
 	@JoinColumn(name = "pessoa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
-	private Pessoa pessoa;
+	private PessoaJuridica pessoa;
 	
 	@NotNull(message = "Conta a pagar deve ser informada")
 	@ManyToOne
@@ -82,5 +87,8 @@ public class NotaFiscalCompra implements Serializable {
 	@JoinColumn(name = "empresa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
 	private PessoaJuridica empresa;
+	
+	@OneToMany(mappedBy = "notaFiscalCompra", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<NotaItemProduto> itens = new ArrayList<>();
 
 }

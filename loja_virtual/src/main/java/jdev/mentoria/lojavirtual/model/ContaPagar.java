@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
@@ -49,33 +51,35 @@ public class ContaPagar implements Serializable {
 	@Positive(message = "O desconto não pode ser negativa")
 	private BigDecimal valorDesconto;
 	
-	@NotBlank(message = "Status é obrigatório")
+	@NotNull(message = "Status é obrigatório")
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private StatusContaPagar status;
 	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	@NotNull(message = "Valor de vencimento nao pode ser nula")
 	@Column(nullable = false)
 	private LocalDate dataVencimento;
 	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	@Column(nullable = false)
 	private LocalDate dataPagamento;
 	
 	@NotNull(message = "Pessoa deve ser informada")
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne
 	@JoinColumn(name = "pessoa_id", nullable = false,
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
-	private Pessoa pessoa;
+	private PessoaFisica pessoa;
 
 	@NotNull(message = "Pessoa fornecedora deve ser informada")
-	@ManyToOne(targetEntity = Pessoa.class)
-	@JoinColumn(name = "pessoa_forn_id", nullable = false, 
+	@ManyToOne
+	@JoinColumn( nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_forn_fk"))
-	private Pessoa pessoa_fornecedora;
+	private PessoaJuridica pessoaFornecedora;
 	
 	@NotNull(message = "A empresa deve ser informada")
 	@ManyToOne
-	@JoinColumn(name = "empresa_id", nullable = false, 
+	@JoinColumn(nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
 	private PessoaJuridica empresa;
 
