@@ -37,10 +37,10 @@ public class AvaliacaoProduto implements Serializable {
 	private String descricao;
 	
 	@NotNull(message = "Necessário informar uma pessoa")
-	@ManyToOne(targetEntity = Pessoa.class)
+	@ManyToOne
 	@JoinColumn(name = "pessoa_id", nullable = false, 
 	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
-	private Pessoa pessoa;
+	private PessoaFisica pessoa;
 
 	@NotNull(message = "Necessário informar o produto")
 	@ManyToOne
