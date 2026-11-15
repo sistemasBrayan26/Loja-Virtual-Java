@@ -1,6 +1,6 @@
 package jdev.mentoria.lojavirtual.controller;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +38,7 @@ public class ProdutoController {
 	
 	@PostMapping
 	public ResponseEntity<Produto> salvar(@RequestBody @Valid Produto produto) throws 
-	UnsupportedEncodingException, MessagingException, ExceptionMentoria {
+	MessagingException, ExceptionMentoria, IOException {
 		
 		produto = cadastroProdutoService.registrar(produto);
 		
