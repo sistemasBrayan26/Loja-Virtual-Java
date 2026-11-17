@@ -26,7 +26,7 @@ public class ItemVendaLoja implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_nota_fiscal_venda")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@NotNull(message = "Quantidade é obrigatória")
@@ -42,7 +42,7 @@ public class ItemVendaLoja implements Serializable {
 
 	@NotNull(message = "Venda deve ser informada")
 	@ManyToOne
-	@JoinColumn(name = "venda_compraLoja_virtu_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "venda_compraLoja_virtu_fk"))
+	@JoinColumn(name = "venda_compraLoja_virtual_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "venda_compraLoja_virtu_fk"))
 	private VendaCompraLojaVirtual vendaCompraLojaVirtual;
 	
 	@NotNull(message = "Empresa é obrigatória")

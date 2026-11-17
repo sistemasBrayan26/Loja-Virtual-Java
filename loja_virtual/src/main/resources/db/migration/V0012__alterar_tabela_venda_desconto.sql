@@ -1,0 +1,1 @@
+alter table venda_compra_loja_virtual alter column valor_desconto drop not null;

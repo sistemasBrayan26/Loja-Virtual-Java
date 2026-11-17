@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -44,16 +46,17 @@ public class VendaCompraLojaVirtual implements Serializable {
 	
 	@NotNull(message = "A pessoa é obrigatória")
 	@ManyToOne
-	@JoinColumn(name = "pessoa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
+	@JoinColumn(name = "pessoa_id", nullable = false, 
+	foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "pessoa_fk"))
 	private PessoaFisica pessoa;
 	
 	@NotNull(message = "Endereço para entrega é obrigatório")
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "endereco_entrega_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "endereco_entrega_fk"))
 	private Endereco enderecoEntrega;
 	
 	@NotNull(message = "Endereço de cobrança é obrigatório")
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "endereco_cobranca_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "endereco_cobranca_fk"))
 	private Endereco enderecoCobranca;
 	
@@ -71,13 +74,12 @@ public class VendaCompraLojaVirtual implements Serializable {
 	@JoinColumn(name = "forma_pagamento_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "forma_pagamento_fk"))
 	private FormaPagamento formaPagamento;
 	
-	@NotNull(message = "Nota é obrigatória")
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "nota_fiscal_venda_id", nullable = true, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "nota_fiscal_venda_fk"))
+	@OneToOne
+	@JoinColumn(name = "nota_fiscal_venda_id", foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "nota_fiscal_venda_fk"))
 	private NotaFiscalVenda notaFiscalVenda;
 	
 	@ManyToOne
-	@JoinColumn(name = "cupom_desc_id", foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "cupom_desc_fk"))
+	@JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "cupom_desc_fk"))
 	private CupomDesconto cupomDesconto;
 	
 	@NotNull(message = "Valor de frete é obrigatorio")
@@ -89,10 +91,12 @@ public class VendaCompraLojaVirtual implements Serializable {
 	@Column(nullable = false)
 	private Integer diasEntrega;
 	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	@NotNull(message = "A data da venda deve ser informada")
 	@Column(nullable = false)
 	private LocalDate dataVenda;
 	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	@Column(nullable = false)
 	private LocalDate dataEntrega;
 	
@@ -101,7 +105,7 @@ public class VendaCompraLojaVirtual implements Serializable {
 	@JoinColumn(name = "empresa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
 	private PessoaJuridica empresa;
 	
-	@NotBlank(message = "Status é obrigatório")
+	@NotNull(message = "Status é obrigatório")
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private StatusVendaLojaVirtual status;
