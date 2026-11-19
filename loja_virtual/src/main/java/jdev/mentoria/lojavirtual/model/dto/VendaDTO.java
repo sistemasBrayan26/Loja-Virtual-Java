@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jdev.mentoria.lojavirtual.model.enums.StatusVendaLojaVirtual;
 import lombok.Data;
 
@@ -25,7 +27,11 @@ public class VendaDTO implements Serializable {
 	private Long cupomDescontoId;
 	private BigDecimal valorFrete;
 	private Integer diasEntrega;
+	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataVenda;
+
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataEntrega;
 	private StatusVendaLojaVirtual status;
 	private Long empresaId;

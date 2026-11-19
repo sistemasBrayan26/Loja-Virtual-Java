@@ -1,0 +1,1 @@
+alter table venda_compra_loja_virtual add column excluido boolean default false;

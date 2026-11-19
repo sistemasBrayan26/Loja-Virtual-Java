@@ -110,6 +110,8 @@ public class VendaCompraLojaVirtual implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private StatusVendaLojaVirtual status;
 	
+	private Boolean excluido = Boolean.FALSE;
+	
 	@OneToMany(mappedBy = "vendaCompraLojaVirtual", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<ItemVendaLoja> itemVendaLojas = new ArrayList<ItemVendaLoja>();
 

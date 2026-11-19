@@ -19,7 +19,7 @@ import jdev.mentoria.lojavirtual.model.NotaFiscalVenda;
 import jdev.mentoria.lojavirtual.repository.NotaFiscalVendaRepository;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/notas/vendas")
 public class NotaFiscalController {
 	
 	@Autowired
@@ -43,6 +43,13 @@ public class NotaFiscalController {
 	public ResponseEntity<NotaFiscalVenda> buscarPorId(@PathVariable Long id) throws ExceptionMentoria  {
 		NotaFiscalVenda nota = repositorio.findById(id)
 				.orElseThrow(() ->  new ExceptionMentoria("Nota não localizada"));
+		return ResponseEntity.ok(nota);
+	}
+	
+	@GetMapping("/obterNFDaVenda/{idVenda}")
+	public ResponseEntity<NotaFiscalVenda> obterNotaFiscalAPartirDaVenda(@PathVariable Long idVenda) throws ExceptionMentoria {
+		NotaFiscalVenda nota = repositorio.findByVendaCompraLojaVirtualId(idVenda)
+				.orElseThrow(() -> new ExceptionMentoria("Nota fiscal nao localizada"));
 		return ResponseEntity.ok(nota);
 	}
 
